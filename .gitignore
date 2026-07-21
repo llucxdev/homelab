@@ -1,0 +1,28 @@
+# Environment
+.env
+
+# Logs
+*.log
+logs/
+
+# Media
+/media/
+
+# Downloads
+downloads/
+torrents/
+
+# Databases
+*/data/
+
+# Minecraft
+*/world/
+*/backups/
+
+# Temporary
+tmp/
+cache/
+
+# OS
+.DS_Store
+Thumbs.db
