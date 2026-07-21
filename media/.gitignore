@@ -1,0 +1,15 @@
+# Environment
+.env
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+cache/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db

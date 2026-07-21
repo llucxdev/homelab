@@ -5,24 +5,19 @@
 *.log
 logs/
 
-# Media
-/media/
-
-# Downloads
-downloads/
-torrents/
+# Docker runtime
+**/config/logs/
+**/config/cache/
+**/config/Cache/
 
 # Databases
-*/data/
+**/*.db-shm
+**/*.db-wal
+**/*.sqlite-shm
+**/*.sqlite-wal
 
-# Minecraft
-*/world/
-*/backups/
+# Python
+__pycache__/
 
-# Temporary
-tmp/
-cache/
-
-# OS
+# macOS
 .DS_Store
-Thumbs.db
