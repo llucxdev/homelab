@@ -78,3 +78,9 @@ media/prowlarr/config/logs/
 media/homepage/logs/
 
 
+# Runtime files
+**/*.pid
+**/logs.db
+**/lockfile
+**/*.mmdb
+**/web_clientdata.json
