@@ -1,81 +1,80 @@
-# =========================
-# Global
-# =========================
+# ==========================
+# Environment
+# ==========================
 
 .env
+**/.env
 
-**/*.db
-**/*.db-shm
-**/*.db-wal
+# ==========================
+# Databases
+# (Las mantenemos versionadas si ya están en Git)
+# ==========================
+
+*.db-shm
+*.db-wal
+
+# ==========================
+# Logs
+# ==========================
+
 **/*.log
+**/logs/
+**/log/
 
-# =========================
-# Homepage
-# =========================
-
-media/homepage/logs
-
-# =========================
+# ==========================
 # Jellyfin
-# =========================
+# ==========================
 
 media/jellyfin/config/cache/
-media/jellyfin/config/log/
 media/jellyfin/config/data/
+media/jellyfin/config/log/
 media/jellyfin/config/metadata/
 
-# =========================
-# Prowlarr
-# =========================
-
-media/prowlarr/config/logs/
-media/prowlarr/config/prowlarr.db*
-media/prowlarr/config/logs.db*
-
-# =========================
+# ==========================
 # Radarr
-# =========================
+# ==========================
 
-media/radarr/config/logs/
-media/radarr/config/radarr.db*
 media/radarr/config/MediaCover/
+media/radarr/config/Backups/
+media/radarr/config/logs/
 
-# =========================
+# ==========================
 # Sonarr
-# =========================
+# ==========================
 
+media/sonarr/config/Backups/
 media/sonarr/config/logs/
-media/sonarr/config/sonarr.db*
 
-# =========================
+# ==========================
 # Bazarr
-# =========================
+# ==========================
 
-media/bazarr/config/logs/
-media/bazarr/config/db*
 media/bazarr/config/backup/
+media/bazarr/config/cache/
+media/bazarr/config/logs/
+
+media/bazarr/config/config/analytics_visitor_id.txt
+media/bazarr/config/config/announcements.json
 media/bazarr/config/config/releases.txt
 media/bazarr/config/config/throttled_providers.dat
 
-# =========================
+# ==========================
 # qBittorrent
-# =========================
+# ==========================
 
-media/qbittorrent/config/qBittorrent/data/logs/
 media/qbittorrent/config/qBittorrent/data/BT_backup/
+media/qbittorrent/config/qBittorrent/data/logs/
+media/qbittorrent/config/qBittorrent/config/ipc-socket
+media/qbittorrent/config/qBittorrent/config/qBittorrent-data.conf
 
-# =========================
-# Temporary files
-# =========================
+# ==========================
+# Prowlarr
+# ==========================
 
-*.tmp
-*.bak
-*.swp
-.DS_Store
-Thumbs.db
+media/prowlarr/config/Definitions/
+media/prowlarr/config/logs/
+
+# Homepage
+media/homepage/logs/
 
 
-
-# BBDD
-media/sonarr/config/logs.db*
-media/prowlarr/config/logs.db*
