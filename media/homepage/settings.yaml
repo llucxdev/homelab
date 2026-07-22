@@ -1,0 +1,18 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/settings/
+
+title: Lluc HomeLab
+
+theme: dark
+color: slate
+
+background:
+  color: "#000000"
+
+headerStyle: clean
+
+layout:
+  Multimedia:
+    style: row
+    columns: 4

@@ -1,9 +1,10 @@
 ---
 addic7ed:
-  cookies: ''
-  password: ''
+  cookies: PHPSESSID=5daos2aed90u4ieg3rjf4leo43; wikisubtitlespass=0d515c33b96c24a547d2a99e8d59ceb0;
+    wikisubtitlesuser=1197574
+  password: _t7JRFZb*zRG4Mu
   user_agent: ''
-  username: ''
+  username: lluuuc12
   vip: false
 analytics:
   enabled: true
@@ -71,7 +72,13 @@ general:
   embedded_subtitles_parser: ffprobe
   enable_strm_support: false
   enabled_integrations: []
-  enabled_providers: []
+  enabled_providers:
+  - subdl
+  - subtis
+  - subtitulamostv
+  - addic7ed
+  - opensubtitlescom
+  - subx
   external_webhook_password: ''
   external_webhook_url: ''
   external_webhook_username: ''
@@ -173,11 +180,11 @@ napisy24:
   password: ''
   username: ''
 opensubtitlescom:
-  include_ai_translated: false
-  include_machine_translated: false
-  password: ''
+  include_ai_translated: true
+  include_machine_translated: true
+  password: 9@yUg,nh/5Pc$YZ
   use_hash: true
-  username: ''
+  username: lluuuc_12
 pipocas:
   password: ''
   username: ''
@@ -264,7 +271,7 @@ sonarr:
   sync_only_monitored_series: false
   use_ffprobe_cache: true
 subdl:
-  api_key: ''
+  api_key: subdl_q51fJ_XRAWAr_HPfIPtT-AsZ1EBpTTUg3I6bUErZM5E
 subf2m:
   user_agent: ''
   verify_ssl: true
@@ -291,7 +298,7 @@ subsync:
   use_subsync_movie_threshold: false
   use_subsync_threshold: false
 subx:
-  api_key: ''
+  api_key: c56-ONkS_c56-ONkSaft6G7mBeEu8shrowiryN9B1b1aQwxpUpjo
 titlovi:
   password: ''
   username: ''

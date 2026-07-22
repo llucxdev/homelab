@@ -1,23 +1,51 @@
-# Environment
 .env
 
-# Logs
-*.log
-logs/
+homepage/logs
 
-# Docker runtime
-**/config/logs/
-**/config/cache/
-**/config/Cache/
+jellyfin/config/cache
+jellyfin/config/log
+jellyfin/config/data
 
-# Databases
+prowlarr/config/logs
+prowlarr/config/prowlarr.db*
+
+radarr/config/logs
+radarr/config/radarr.db*
+
+sonarr/config/logs
+sonarr/config/sonarr.db*
+
+bazarr/config/logs
+bazarr/config/db*
+
+qbittorrent/config/qBittorrent/data/logs
+
+**/*.db
 **/*.db-shm
 **/*.db-wal
-**/*.sqlite-shm
-**/*.sqlite-wal
+**/*.log
 
-# Python
-__pycache__/
 
-# macOS
-.DS_Store
+# Homepage
+media/homepage/logs
+
+# Jellyfin
+media/jellyfin/config/data
+media/jellyfin/config/cache
+media/jellyfin/config/metadata
+
+# qBittorrent
+media/qbittorrent/config/qBittorrent/data/BT_backup
+media/qbittorrent/config/qBittorrent/data/logs
+
+# Bazarr
+media/bazarr/config/backup
+media/bazarr/config/config/releases.txt
+media/bazarr/config/config/throttled_providers.dat
+
+# Prowlarr
+media/prowlarr/config/logs
+
+# Sonarr / Radarr
+media/sonarr/config/logs
+media/radarr/config/logs

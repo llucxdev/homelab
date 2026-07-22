@@ -1,0 +1,42 @@
+- Media:
+    - Jellyfin:
+        icon: jellyfin.png
+        href: http://192.168.0.95:8096
+        description: Servidor multimedia
+        container: jellyfin
+
+    - Radarr:
+        icon: radarr.png
+        href: http://192.168.0.95:7878
+        description: Gestión de películas
+        container: radarr
+
+    - Sonarr:
+        icon: sonarr.png
+        href: http://192.168.0.95:8989
+        description: Gestión de series
+        container: sonarr
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: http://192.168.0.95:9696
+        description: Indexadores
+        container: prowlarr
+
+    - Bazarr:
+        icon: bazarr.png
+        href: http://192.168.0.95:6767
+        description: Subtítulos
+        container: bazarr
+
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: http://192.168.0.95:8080
+        description: Cliente Torrent
+        container: qbittorrent
+
+    - FlareSolverr:
+        icon: flaresolverr.png
+        href: http://192.168.0.95:8191
+        description: Cloudflare Solver
+        container: flaresolverr
