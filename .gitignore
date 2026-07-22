@@ -1,51 +1,81 @@
+# =========================
+# Global
+# =========================
+
 .env
-
-homepage/logs
-
-jellyfin/config/cache
-jellyfin/config/log
-jellyfin/config/data
-
-prowlarr/config/logs
-prowlarr/config/prowlarr.db*
-
-radarr/config/logs
-radarr/config/radarr.db*
-
-sonarr/config/logs
-sonarr/config/sonarr.db*
-
-bazarr/config/logs
-bazarr/config/db*
-
-qbittorrent/config/qBittorrent/data/logs
 
 **/*.db
 **/*.db-shm
 **/*.db-wal
 **/*.log
 
-
+# =========================
 # Homepage
+# =========================
+
 media/homepage/logs
 
+# =========================
 # Jellyfin
-media/jellyfin/config/data
-media/jellyfin/config/cache
-media/jellyfin/config/metadata
+# =========================
 
-# qBittorrent
-media/qbittorrent/config/qBittorrent/data/BT_backup
-media/qbittorrent/config/qBittorrent/data/logs
+media/jellyfin/config/cache/
+media/jellyfin/config/log/
+media/jellyfin/config/data/
+media/jellyfin/config/metadata/
 
+# =========================
+# Prowlarr
+# =========================
+
+media/prowlarr/config/logs/
+media/prowlarr/config/prowlarr.db*
+media/prowlarr/config/logs.db*
+
+# =========================
+# Radarr
+# =========================
+
+media/radarr/config/logs/
+media/radarr/config/radarr.db*
+media/radarr/config/MediaCover/
+
+# =========================
+# Sonarr
+# =========================
+
+media/sonarr/config/logs/
+media/sonarr/config/sonarr.db*
+
+# =========================
 # Bazarr
-media/bazarr/config/backup
+# =========================
+
+media/bazarr/config/logs/
+media/bazarr/config/db*
+media/bazarr/config/backup/
 media/bazarr/config/config/releases.txt
 media/bazarr/config/config/throttled_providers.dat
 
-# Prowlarr
-media/prowlarr/config/logs
+# =========================
+# qBittorrent
+# =========================
 
-# Sonarr / Radarr
-media/sonarr/config/logs
-media/radarr/config/logs
+media/qbittorrent/config/qBittorrent/data/logs/
+media/qbittorrent/config/qBittorrent/data/BT_backup/
+
+# =========================
+# Temporary files
+# =========================
+
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+
+
+# BBDD
+media/sonarr/config/logs.db*
+media/prowlarr/config/logs.db*
