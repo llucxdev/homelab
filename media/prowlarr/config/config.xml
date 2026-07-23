@@ -8,7 +8,7 @@
   <AuthenticationMethod>Forms</AuthenticationMethod>
   <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
   <Branch>master</Branch>
-  <LogLevel>trace</LogLevel>
+  <LogLevel>debug</LogLevel>
   <SslCertPath></SslCertPath>
   <SslCertPassword></SslCertPassword>
   <UrlBase></UrlBase>

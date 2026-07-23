@@ -93,7 +93,7 @@ services:
       - .env
 
     environment:
-      - LOG_LEVEL=info
+      - LOG_LEVEL=debug
       - LOG_HTML=false
       - CAPTCHA_SOLVER=none
 
@@ -137,6 +137,22 @@ services:
       - ./homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+    networks:
+      - media
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    restart: unless-stopped
+
+    environment:
+      - TZ=Europe/Madrid
+
+    ports:
+      - "5055:5055"
+
+    volumes:
+      - ./jellyseerr/config:/app/config
     networks:
       - media
 

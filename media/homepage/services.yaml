@@ -44,3 +44,9 @@
         href: http://192.168.0.95:8191
         server: my-docker
         container: flaresolverr
+
+    - jellyseerr:
+        icon: jellyseerr.png
+        href: http://192.168.0.95:5055
+        server: my-docker
+        container: jellyseerr
