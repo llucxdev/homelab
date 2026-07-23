@@ -84,3 +84,6 @@ media/homepage/logs/
 **/lockfile
 **/*.mmdb
 **/web_clientdata.json
+
+# backups
+backups/
