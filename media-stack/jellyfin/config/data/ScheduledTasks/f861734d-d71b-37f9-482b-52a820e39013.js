@@ -1,1 +1,0 @@
-{"StartTimeUtc":"2026-07-26T09:57:19.9466858Z","EndTimeUtc":"2026-07-26T09:57:19.9619989Z","Status":"Completed","Name":"Escaneo de segmentos de medios","Key":"TaskExtractMediaSegments","Id":"f861734dd71b37f9482b52a820e39013"}

@@ -1,1 +1,0 @@
-{"StartTimeUtc":"2026-07-25T20:52:13.8966147Z","EndTimeUtc":"2026-07-25T20:52:13.897266Z","Status":"Completed","Name":"Limpiar las transcodificaciones","Key":"DeleteTranscodeFiles","Id":"7d8088c10902f1bf4072ded42437bcfb"}
