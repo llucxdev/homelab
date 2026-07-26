@@ -1,98 +1,96 @@
-# ==========================
+# ==========================================
 # Environment
-# ==========================
+# ==========================================
 
 .env
 **/.env
 
-# ==========================
-# Databases
-# (Las mantenemos versionadas si ya están en Git)
-# ==========================
+# ==========================================
+# Runtime / Logs
+# ==========================================
+
+**/*.log
+**/*.pid
+**/logs/
+**/log/
+**/logs.db
+**/lockfile
+
+# ==========================================
+# SQLite temporales
+# ==========================================
 
 *.db-shm
 *.db-wal
 
-# ==========================
-# Logs
-# ==========================
-
-**/*.log
-**/logs/
-**/log/
-
-# ==========================
+# ==========================================
 # Jellyfin
-# ==========================
+# ==========================================
 
-media/jellyfin/config/cache/
-media/jellyfin/config/data/
-media/jellyfin/config/log/
-media/jellyfin/config/metadata/
+media-stack/jellyfin/config/cache/
+media-stack/jellyfin/config/data/
+media-stack/jellyfin/config/log/
+media-stack/jellyfin/config/metadata/
 
-# ==========================
+# ==========================================
 # Radarr
-# ==========================
+# ==========================================
 
-media/radarr/config/MediaCover/
-media/radarr/config/Backups/
-media/radarr/config/logs/
+media-stack/radarr/config/MediaCover/
+media-stack/radarr/config/Backups/
+media-stack/radarr/config/logs/
 
-# ==========================
+# ==========================================
 # Sonarr
-# ==========================
+# ==========================================
 
-media/sonarr/config/Backups/
-media/sonarr/config/logs/
+media-stack/sonarr/config/Backups/
+media-stack/sonarr/config/logs/
 
-# ==========================
+# ==========================================
 # Bazarr
-# ==========================
+# ==========================================
 
-media/bazarr/config/backup/
-media/bazarr/config/cache/
-media/bazarr/config/logs/
+media-stack/bazarr/config/backup/
+media-stack/bazarr/config/cache/
+media-stack/bazarr/config/logs/
 
-media/bazarr/config/config/analytics_visitor_id.txt
-media/bazarr/config/config/announcements.json
-media/bazarr/config/config/releases.txt
-media/bazarr/config/config/throttled_providers.dat
+media-stack/bazarr/config/config/analytics_visitor_id.txt
+media-stack/bazarr/config/config/announcements.json
+media-stack/bazarr/config/config/releases.txt
+media-stack/bazarr/config/config/throttled_providers.dat
 
-# ==========================
+# ==========================================
 # qBittorrent
-# ==========================
+# ==========================================
 
-media/qbittorrent/config/qBittorrent/data/BT_backup/
-media/qbittorrent/config/qBittorrent/data/logs/
-media/qbittorrent/config/qBittorrent/config/ipc-socket
-media/qbittorrent/config/qBittorrent/config/qBittorrent-data.conf
+media-stack/qbittorrent/config/qBittorrent/data/BT_backup/
+media-stack/qbittorrent/config/qBittorrent/data/logs/
+media-stack/qbittorrent/config/qBittorrent/config/ipc-socket
+media-stack/qbittorrent/config/qBittorrent/config/qBittorrent-data.conf
 
-# ==========================
+# ==========================================
 # Prowlarr
-# ==========================
+# ==========================================
 
-media/prowlarr/config/Definitions/
-media/prowlarr/config/logs/
+media-stack/prowlarr/config/Definitions/
+media-stack/prowlarr/config/logs/
 
+# ==========================================
 # Homepage
-media/homepage/logs/
+# ==========================================
 
+media-stack/homepage/logs/
 
-# Runtime files
-**/*.pid
-**/logs.db
-**/lockfile
+# ==========================================
+# Otros
+# ==========================================
+
 **/*.mmdb
 **/web_clientdata.json
 
-# backups
 backups/
 
-# generated data
-/databases/mongodb/data/
-/tv-stack/threadfin/config/backup/
-/tv-stack/threadfin/config/data/
-
-/databases/mongodb/data/
-/tv-stack/threadfin/config/backup/
-/tv-stack/threadfin/config/data/
+databases/mongodb/data/
+tv-stack/threadfin/config/backup/
+tv-stack/threadfin/config/data/
