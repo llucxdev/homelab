@@ -87,3 +87,12 @@ media/homepage/logs/
 
 # backups
 backups/
+
+# generated data
+/databases/mongodb/data/
+/tv-stack/threadfin/config/backup/
+/tv-stack/threadfin/config/data/
+
+/databases/mongodb/data/
+/tv-stack/threadfin/config/backup/
+/tv-stack/threadfin/config/data/
