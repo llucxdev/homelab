@@ -3,9 +3,7 @@
 set -e
 
 DATE=$(date +%F)
-
-SOURCE="/srv/docker/media"
-DEST="/srv/docker/backups/media"
+DEST="/srv/backups/media"
 
 mkdir -p "$DEST"
 
