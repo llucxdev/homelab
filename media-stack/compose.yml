@@ -1,4 +1,4 @@
-name: media-stack
+name: media
 
 services:
   jellyfin:
@@ -15,6 +15,7 @@ services:
       - /srv/media/tv:/media/tv
       - /srv/media/anime:/media/anime
       - /srv/media/music:/media/music
+      - /srv/media/test:/media/test
     networks:
       - media
 
@@ -36,7 +37,7 @@ services:
 
     volumes:
       - ./qbittorrent/config:/config
-      - /srv/media/downloads:/downloads
+      - /srv/media:/media
 
     networks:
       - media
@@ -65,7 +66,7 @@ services:
     volumes:
       - ./sonarr/config:/config
       - /srv/media/tv:/tv
-      - /srv/media/downloads:/downloads
+      - /srv/media:/media
     networks:
       - media
 
@@ -80,7 +81,7 @@ services:
     volumes:
       - ./radarr/config:/config
       - /srv/media/movies:/movies
-      - /srv/media/downloads:/downloads
+      - /srv/media:/media
     networks:
       - media
 
@@ -155,3 +156,21 @@ services:
       - ./jellyseerr/config:/app/config
     networks:
       - media
+
+  filebrowser:
+    image: gtstef/filebrowser
+    container_name: filebrowser
+    restart: unless-stopped
+
+    ports:
+      - "8085:80"
+
+    volumes:
+      - /srv/media:/srv/media
+      - ./filebrowser/database:/database
+      - ./filebrowser/config:/config
+
+
+networks:
+  media:
+    driver: bridge

@@ -93,8 +93,8 @@ general:
   language_equals: []
   minimum_score: 90
   minimum_score_movie: 70
-  movie_default_enabled: false
-  movie_default_profile: ''
+  movie_default_enabled: true
+  movie_default_profile: 1
   movie_tag_enabled: false
   multithreading: true
   notify_if_nothing_is_missing_for_signalr_event: false
@@ -103,12 +103,12 @@ general:
   path_mappings: []
   path_mappings_movie: []
   port: 6767
-  postprocessing_cmd: ''
+  postprocessing_cmd: bash /srv/docker/scripts/embed-subtitles.sh "{{episode}}"
   postprocessing_threshold: 90
   postprocessing_threshold_movie: 70
   remove_profile_tags: []
-  serie_default_enabled: false
-  serie_default_profile: ''
+  serie_default_enabled: true
+  serie_default_profile: 1
   serie_tag_enabled: false
   show_live_badge: true
   single_language: false
@@ -120,13 +120,13 @@ general:
   upgrade_frequency: 12
   upgrade_manual: true
   upgrade_subs: true
-  use_embedded_subs: true
+  use_embedded_subs: false
   use_external_webhook: false
   use_jellyfin: true
   use_plex: false
-  use_postprocessing: false
-  use_postprocessing_threshold: false
-  use_postprocessing_threshold_movie: false
+  use_postprocessing: true
+  use_postprocessing_threshold: true
+  use_postprocessing_threshold_movie: true
   use_radarr: true
   use_scenename: true
   use_sonarr: true
@@ -287,16 +287,16 @@ subsync:
     blacklisted_languages: []
     blacklisted_providers: []
   debug: false
-  force_audio: false
+  force_audio: true
   gss: true
   max_offset_seconds: 60
-  no_fix_framerate: true
+  no_fix_framerate: false
   subsync_movie_threshold: 70
   subsync_threshold: 90
-  use_original_language: false
-  use_subsync: false
-  use_subsync_movie_threshold: false
-  use_subsync_threshold: false
+  use_original_language: true
+  use_subsync: true
+  use_subsync_movie_threshold: true
+  use_subsync_threshold: true
 subx:
   api_key: c56-ONkS_c56-ONkSaft6G7mBeEu8shrowiryN9B1b1aQwxpUpjo
 titlovi:

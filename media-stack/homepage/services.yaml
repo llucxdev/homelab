@@ -1,52 +1,55 @@
 ---
-# For configuration options and examples, please see:
-# https://gethomepage.dev/configs/services/
-
 - Multimedia:
     - Jellyfin:
         icon: jellyfin.png
-        href: http://192.168.0.95:8096
+        href: http://llucserver.taila327d8.ts.net:8096
         server: my-docker
         container: jellyfin
 
+    - Jellyseerr:
+        icon: jellyseerr.png
+        href: http://llucserver.taila327d8.ts.net:5055
+        server: my-docker
+        container: jellyseerr
+
     - Radarr:
         icon: radarr.png
-        href: http://192.168.0.95:7878
+        href: http://llucserver.taila327d8.ts.net:7878
         server: my-docker
         container: radarr
 
     - Sonarr:
         icon: sonarr.png
-        href: http://192.168.0.95:8989
+        href: http://llucserver.taila327d8.ts.net:8989
         server: my-docker
         container: sonarr
 
     - Prowlarr:
         icon: prowlarr.png
-        href: http://192.168.0.95:9696
+        href: http://llucserver.taila327d8.ts.net:9696
         server: my-docker
         container: prowlarr
 
     - Bazarr:
         icon: bazarr.png
-        href: http://192.168.0.95:6767
+        href: http://llucserver.taila327d8.ts.net:6767
         server: my-docker
         container: bazarr
 
     - qBittorrent:
         icon: qbittorrent.png
-        href: http://192.168.0.95:8080
+        href: http://llucserver.taila327d8.ts.net:8080
         server: my-docker
         container: qbittorrent
 
     - FlareSolverr:
         icon: flaresolverr.png
-        href: http://192.168.0.95:8191
+        href: http://llucserver.taila327d8.ts.net:8191
         server: my-docker
         container: flaresolverr
 
-    - jellyseerr:
-        icon: jellyseerr.png
-        href: http://192.168.0.95:5055
+    - FileBrowser:
+        icon: filebrowser.png
+        href: http://llucserver.taila327d8.ts.net:8085
         server: my-docker
-        container: jellyseerr
+        containter: filebrowser
