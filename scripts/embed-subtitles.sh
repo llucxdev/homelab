@@ -20,11 +20,12 @@ log() {
 
 notify_sonarr() {
 
-    [[ -n "$EPISODE_ID" ]] || return 0
+    [[ -n "${SERIES_ID:-}" ]] || return 0
+    [[ -n "$MEDIA_ID" ]] || return 0
     [[ -n "${SONARR_URL:-}" ]] || return 0
     [[ -n "${SONARR_API_KEY:-}" ]] || return 0
 
-    log "INFO | Rescan episodio Sonarr | EpisodeId=$EPISODE_ID"
+    log "INFO | Rescan episodio Sonarr | EpisodeId=$MEDIA_ID SeriesId=$SERIES_ID"
 
     curl -fsS \
         -X POST \
@@ -33,9 +34,41 @@ notify_sonarr() {
         "$SONARR_URL/api/v3/command" \
         -d "{
             \"name\":\"RescanEpisodes\",
-            \"episodeIds\":[${EPISODE_ID}]
+            \"episodeIds\":[${MEDIA_ID}]
         }" >/dev/null || \
     log "WARN | No se pudo actualizar Sonarr"
+
+}
+
+notify_radarr() {
+
+    [[ -z "${SERIES_ID:-}" ]] || return 0
+    [[ -n "$MEDIA_ID" ]] || return 0
+    [[ -n "${RADARR_URL:-}" ]] || return 0
+    [[ -n "${RADARR_API_KEY:-}" ]] || return 0
+
+    log "INFO | Refresh película Radarr | MovieId=$MEDIA_ID"
+
+    curl -fsS \
+        -X POST \
+        -H "X-Api-Key: $RADARR_API_KEY" \
+        -H "Content-Type: application/json" \
+        "$RADARR_URL/api/v3/command" \
+        -d "{
+            \"name\":\"RefreshMovie\",
+            \"movieIds\":[${MEDIA_ID}]
+        }" >/dev/null || \
+    log "WARN | No se pudo actualizar Radarr"
+
+}
+
+notify_arr() {
+
+    if [[ -n "${SERIES_ID:-}" ]]; then
+        notify_sonarr
+    else
+        notify_radarr
+    fi
 
 }
 
@@ -275,18 +308,21 @@ process_video() {
 
     if [[ "$EXT" == "mp4" ]]; then
         rm -f "$VIDEO"
-	mv "$TMP" "$DIR/$NAME.mkv"
-    [[ -f "$TMP" ]] || {
-        log "ERROR | MKV temporal no encontrado"
+	mv -f "$TMP" "$DIR/$NAME.mkv"
+    [[ -f "$DIR/$NAME.mkv" ]] || {
+        log "ERROR | No se pudo crear el MKV final"
         exit 1
     }
 	touch "$DIR/$NAME.mkv"
-    sleep 1
-	notify_sonarr
+	notify_arr
     else
         mv -f "$TMP" "$VIDEO"
+        [[ -f "$VIDEO" ]] || {
+            log "ERROR | No se pudo reemplazar el MKV"
+            exit 1
+        }
         touch "$VIDEO"
-        notify_sonarr
+        notify_arr
     fi
 
     echo "[OK] $(basename "${VIDEO%.*}.mkv")"
@@ -308,7 +344,14 @@ process_video() {
 }
 
 TARGET="$1"
-EPISODE_ID="${2:-}"
+
+if [[ $# -eq 3 ]]; then
+    MEDIA_ID="$2"
+    SERIES_ID="$3"
+else
+    MEDIA_ID=""
+    SERIES_ID=""
+fi
 
 if [[ -d "$TARGET" ]]; then
 
