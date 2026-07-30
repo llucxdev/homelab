@@ -6,8 +6,10 @@ export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
 
 TMP_SUFFIX=".embedtmp.mkv"
-LOGFILE="/srv/docker/scripts/embed-subtitles.log"
-CONFIG="/srv/docker/scripts/embed-subtitles.conf"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOGFILE="$SCRIPT_DIR/embed-subtitles.log"
+CONFIG="$SCRIPT_DIR/embed-subtitles.conf"
 
 if [[ -f "$CONFIG" ]]; then
     # shellcheck disable=SC1090
@@ -25,7 +27,7 @@ notify_sonarr() {
     [[ -n "${SONARR_URL:-}" ]] || return 0
     [[ -n "${SONARR_API_KEY:-}" ]] || return 0
 
-    log "INFO | Rescan episodio Sonarr | EpisodeId=$MEDIA_ID SeriesId=$SERIES_ID"
+    log "INFO | Rescan Sonarr | SeriesId=$SERIES_ID EpisodeId=$MEDIA_ID"
 
     curl -fsS \
         -X POST \
@@ -33,8 +35,8 @@ notify_sonarr() {
         -H "Content-Type: application/json" \
         "$SONARR_URL/api/v3/command" \
         -d "{
-            \"name\":\"RescanEpisodes\",
-            \"episodeIds\":[${MEDIA_ID}]
+            \"name\":\"RescanSeries\",
+            \"seriesId\":${SERIES_ID}
         }" >/dev/null || \
     log "WARN | No se pudo actualizar Sonarr"
 
@@ -63,13 +65,7 @@ notify_radarr() {
 }
 
 notify_arr() {
-
-    if [[ -n "${SERIES_ID:-}" ]]; then
-        notify_sonarr
-    else
-        notify_radarr
-    fi
-
+    [[ -n "${SERIES_ID:-}" ]] && notify_sonarr || notify_radarr
 }
 
 TMP=""
@@ -314,6 +310,7 @@ process_video() {
         exit 1
     }
 	touch "$DIR/$NAME.mkv"
+    sync
 	notify_arr
     else
         mv -f "$TMP" "$VIDEO"
@@ -322,6 +319,7 @@ process_video() {
             exit 1
         }
         touch "$VIDEO"
+        sync
         notify_arr
     fi
 

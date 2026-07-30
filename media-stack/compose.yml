@@ -105,7 +105,9 @@ services:
       - media
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
+    build:
+      context: ./bazarr
+    image: bazarr-mkvmerge:latest
     container_name: bazarr
     restart: unless-stopped
 
@@ -119,6 +121,7 @@ services:
       - ./bazarr/config:/config
       - /srv/media/movies:/movies
       - /srv/media/tv:/tv
+      - /srv/docker/scripts:/scripts
 
     networks:
       - media

@@ -99,11 +99,12 @@ general:
   multithreading: true
   notify_if_nothing_is_missing_for_signalr_event: false
   page_size: 25
-  parse_embedded_audio_track: false
+  parse_embedded_audio_track: true
   path_mappings: []
   path_mappings_movie: []
   port: 6767
-  postprocessing_cmd: bash /srv/docker/scripts/embed-subtitles.sh "{{episode}}"
+  postprocessing_cmd: bash /scripts/embed-subtitles.sh "{{episode}}" "{{episode_id}}"
+    "{{series_id}}"
   postprocessing_threshold: 90
   postprocessing_threshold_movie: 70
   remove_profile_tags: []
