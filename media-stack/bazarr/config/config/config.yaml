@@ -103,8 +103,8 @@ general:
   path_mappings: []
   path_mappings_movie: []
   port: 6767
-  postprocessing_cmd: bash /scripts/embed-subtitles.sh "{{episode}}" "{{episode_id}}"
-    "{{series_id}}"
+  postprocessing_cmd: bash /scripts/embed-subtitles.sh "{subtitles}" "{episode}" "{subtitles_language_code2}"
+    "{episode_id}" "{series_id}"
   postprocessing_threshold: 90
   postprocessing_threshold_movie: 70
   remove_profile_tags: []
@@ -175,6 +175,7 @@ log:
   include_filter: ''
   use_regex: false
 napiprojekt:
+  hash_only: false
   only_authors: false
   only_real_names: false
 napisy24:
@@ -272,11 +273,16 @@ sonarr:
   sync_only_monitored_series: false
   use_ffprobe_cache: true
 subdl:
+  ai_translate: false
   api_key: subdl_q51fJ_XRAWAr_HPfIPtT-AsZ1EBpTTUg3I6bUErZM5E
+  include_ai_translated: false
 subf2m:
   user_agent: ''
   verify_ssl: true
 subsarr:
+  base_url: ''
+subsdump:
+  api_key: ''
   base_url: ''
 subsource:
   apikey: ''
@@ -289,15 +295,20 @@ subsync:
     blacklisted_providers: []
   debug: false
   force_audio: true
-  gss: true
+  gss: false
   max_offset_seconds: 60
-  no_fix_framerate: false
+  no_fix_framerate: true
+  quality_max_framerate_deviation: 0.1
+  quality_max_offset_seconds: 30
+  quality_min_score: 0.0
   subsync_movie_threshold: 70
   subsync_threshold: 90
   use_original_language: true
   use_subsync: true
   use_subsync_movie_threshold: true
   use_subsync_threshold: true
+subtitlecat:
+  include_machine_translated: false
 subx:
   api_key: c56-ONkS_c56-ONkSaft6G7mBeEu8shrowiryN9B1b1aQwxpUpjo
 titlovi:

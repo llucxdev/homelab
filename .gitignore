@@ -1,3 +1,4 @@
+```gitignore
 # ==========================================
 # Environment
 # ==========================================
@@ -22,6 +23,7 @@
 
 *.db-shm
 *.db-wal
+**/*.db
 
 # ==========================================
 # Jellyfin
@@ -39,6 +41,7 @@ media-stack/jellyfin/config/metadata/
 media-stack/radarr/config/MediaCover/
 media-stack/radarr/config/Backups/
 media-stack/radarr/config/logs/
+media-stack/radarr/config/Sentry/
 
 # ==========================================
 # Sonarr
@@ -46,6 +49,8 @@ media-stack/radarr/config/logs/
 
 media-stack/sonarr/config/Backups/
 media-stack/sonarr/config/logs/
+media-stack/sonarr/config/MediaCover/
+media-stack/sonarr/config/Sentry/
 
 # ==========================================
 # Bazarr
@@ -75,12 +80,20 @@ media-stack/qbittorrent/config/qBittorrent/config/qBittorrent-data.conf
 
 media-stack/prowlarr/config/Definitions/
 media-stack/prowlarr/config/logs/
+media-stack/prowlarr/config/Backups/
+media-stack/prowlarr/config/Sentry/
 
 # ==========================================
 # Homepage
 # ==========================================
 
 media-stack/homepage/logs/
+
+# ==========================================
+# Minecraft
+# ==========================================
+
+minecraft/
 
 # ==========================================
 # Otros
@@ -94,3 +107,4 @@ backups/
 databases/mongodb/data/
 tv-stack/threadfin/config/backup/
 tv-stack/threadfin/config/data/
+```
