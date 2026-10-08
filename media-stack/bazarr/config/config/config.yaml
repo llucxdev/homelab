@@ -103,8 +103,8 @@ general:
   path_mappings: []
   path_mappings_movie: []
   port: 6767
-  postprocessing_cmd: bash /scripts/embed-subtitles.sh "{subtitles}" "{episode}" "{subtitles_language_code2}"
-    "{episode_id}" "{series_id}"
+  postprocessing_cmd: bash /scripts/embed-subtitles.sh "{subtitles}" "{episode}" "{subtitles_language_code3}"
+    "{subtitles_language}" "{episode_id}" "{series_id}"
   postprocessing_threshold: 90
   postprocessing_threshold_movie: 70
   remove_profile_tags: []
@@ -295,9 +295,9 @@ subsync:
     blacklisted_providers: []
   debug: false
   force_audio: true
-  gss: false
+  gss: true
   max_offset_seconds: 60
-  no_fix_framerate: true
+  no_fix_framerate: false
   quality_max_framerate_deviation: 0.1
   quality_max_offset_seconds: 30
   quality_min_score: 0.0
