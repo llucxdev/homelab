@@ -53,3 +53,7 @@
         href: http://llucserver.taila327d8.ts.net:8085
         server: my-docker
         containter: filebrowser
+    
+    - CleanArr:
+        icon: mdi-broom
+        href: http://llucserver.taila327d8.ts.net:8089

@@ -1,17 +1,29 @@
+
 services:
 
   threadfin:
     image: fyb3roptik/threadfin:latest
-
     container_name: threadfin
-
     restart: unless-stopped
-
     ports:
       - "34400:34400"
-
     volumes:
       - ./threadfin/config:/home/threadfin/conf
+    networks:
+      - media
+
+  acestream:
+    image: ghcr.io/martinbjeldbak/acestream-http-proxy:latest
+    container_name: acestream
+    restart: unless-stopped
+    volumes:
+      - ./acestream/data:/home/appuser/.ACEStream
+
+    environment:
+      ALLOW_REMOTE_ACCESS: "yes"
+
+    ports:
+      - "6878:6878"
 
     networks:
       - media

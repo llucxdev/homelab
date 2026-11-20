@@ -16,6 +16,7 @@ services:
       - /srv/media/anime:/media/anime
       - /srv/media/music:/media/music
       - /srv/media/test:/media/test
+      - /srv/media/iptv:/media/iptv
     networks:
       - media
 
@@ -174,6 +175,23 @@ services:
       - ./filebrowser/database:/database
       - ./filebrowser/config:/config
 
+  
+  cleanarr:
+    image: ghcr.io/mambastick/cleanarr:latest
+    container_name: cleanarr
+    restart: unless-stopped
+
+    environment:
+      - DRY_RUN=false
+
+    ports:
+      - "8089:8089"
+
+    volumes:
+      - ./cleanarr/config:/config
+
+    networks:
+      - media
 
 networks:
   media:

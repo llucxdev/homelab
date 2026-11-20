@@ -90,11 +90,14 @@ general:
   ignore_vobsub_subs: false
   instance_name: Bazarr
   ip: '*'
-  language_equals: []
-  minimum_score: 90
-  minimum_score_movie: 70
+  language_equals:
+  - spl:spa
+  - spl@hi:spa@hi
+  - spl@forced:spa@forced
+  minimum_score: 75
+  minimum_score_movie: 75
   movie_default_enabled: true
-  movie_default_profile: 1
+  movie_default_profile: 3
   movie_tag_enabled: false
   multithreading: true
   notify_if_nothing_is_missing_for_signalr_event: false
@@ -109,7 +112,7 @@ general:
   postprocessing_threshold_movie: 70
   remove_profile_tags: []
   serie_default_enabled: true
-  serie_default_profile: 1
+  serie_default_profile: 3
   serie_tag_enabled: false
   show_live_badge: true
   single_language: false
@@ -141,13 +144,17 @@ hdbits:
   username: ''
 jellyfin:
   apikey: 9e166c8c1a7045edb857bea7c40f59f3
-  movie_library: []
-  movie_library_ids: []
+  movie_library:
+  - "Pel\xEDculas"
+  movie_library_ids:
+  - ed2a25286c558a96e1424971742ca250
   refresh_method: immediate
-  series_library: []
-  series_library_ids: []
-  update_movie_library: false
-  update_series_library: false
+  series_library:
+  - Series
+  series_library_ids:
+  - 5ddaa59a73205234890fdcfc683e14ed
+  update_movie_library: true
+  update_series_library: true
   url: http://192.168.0.95:8096
 jimaku:
   api_key: ''
@@ -301,8 +308,8 @@ subsync:
   quality_max_framerate_deviation: 0.1
   quality_max_offset_seconds: 30
   quality_min_score: 0.0
-  subsync_movie_threshold: 70
-  subsync_threshold: 90
+  subsync_movie_threshold: 77
+  subsync_threshold: 77
   use_original_language: true
   use_subsync: true
   use_subsync_movie_threshold: true

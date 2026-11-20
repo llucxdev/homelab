@@ -18,6 +18,20 @@
       <IgnoreDts>true</IgnoreDts>
       <ReadAtNativeFramerate>true</ReadAtNativeFramerate>
     </TunerHostInfo>
+    <TunerHostInfo>
+      <Id>2acfd496a14047958f09ab51a75de758</Id>
+      <Url>/media/iptv/channels.m3u</Url>
+      <Type>m3u</Type>
+      <ImportFavoritesOnly>false</ImportFavoritesOnly>
+      <AllowHWTranscoding>false</AllowHWTranscoding>
+      <AllowFmp4TranscodingContainer>false</AllowFmp4TranscodingContainer>
+      <AllowStreamSharing>true</AllowStreamSharing>
+      <FallbackMaxStreamingBitrate>30000000</FallbackMaxStreamingBitrate>
+      <EnableStreamLooping>false</EnableStreamLooping>
+      <TunerCount>0</TunerCount>
+      <IgnoreDts>true</IgnoreDts>
+      <ReadAtNativeFramerate>true</ReadAtNativeFramerate>
+    </TunerHostInfo>
   </TunerHosts>
   <ListingProviders />
   <PrePaddingSeconds>0</PrePaddingSeconds>

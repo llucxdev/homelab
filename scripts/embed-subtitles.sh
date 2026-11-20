@@ -24,6 +24,7 @@ SERIES_ID=""
 
 VIDEO=""
 TMP=""
+TAG_XMLS=()
 
 ########################################
 # CONFIG OPCIONAL
@@ -65,6 +66,10 @@ cleanup() {
         rm -f -- "$TMP"
         log "INFO | Temporal eliminado | $TMP"
     fi
+
+    for TAG_XML in "${TAG_XMLS[@]:-}"; do
+        [[ -n "$TAG_XML" && -f "$TAG_XML" ]] && rm -f -- "$TAG_XML"
+    done
 }
 
 trap cleanup EXIT
@@ -77,7 +82,7 @@ check_dependencies() {
 
     local missing=0
 
-    for CMD in mkvmerge mkvextract jq curl sha256sum sed awk find sort mktemp df stat sync numfmt; do
+    for CMD in mkvmerge mkvextract jq curl sed awk find sort mktemp df stat sync numfmt sha256sum grep python3 flock realpath; do
 
         if ! command -v "$CMD" >/dev/null 2>&1; then
             echo "ERROR: $CMD no está instalado."
@@ -381,117 +386,6 @@ find_subtitles() {
 }
 
 ########################################
-# HASH DE SUBTÍTULO
-########################################
-
-subtitle_hash() {
-
-    local FILE="$1"
-
-    sed 's/\r$//' "$FILE" |
-        sha256sum |
-        awk '{print $1}'
-}
-
-########################################
-# OBTENER PISTAS DE TEXTO
-########################################
-
-get_text_subtitle_tracks() {
-
-    local FILE="$1"
-
-    mkvmerge -J "$FILE" |
-        jq -r '
-            .tracks[]
-            |
-            select(
-                .type == "subtitles"
-                and (
-                    .codec_id == "S_TEXT/UTF8"
-                    or .codec_id == "S_TEXT/ASS"
-                    or .codec_id == "S_TEXT/SSA"
-                    or .codec_id == "S_TEXT/WEBVTT"
-                )
-            )
-            |
-            "\(.id)\t\(.codec_id)"
-        '
-}
-
-########################################
-# COMPROBAR DUPLICADO
-########################################
-
-subtitle_already_embedded() {
-    local video="$1"
-    local subtitle="$2"
-    local subtitle_lang="$3"
-
-    local temp_dir
-    temp_dir=$(mktemp -d)
-
-    cleanup_duplicate_check() {
-        rm -rf "$temp_dir"
-    }
-
-    normalize_subtitle() {
-        sed '1s/^\xEF\xBB\xBF//' "$1" |
-        sed 's/\r$//' |
-        sed 's/[[:space:]]*$//' |
-        sed '/^[[:space:]]*$/d' |
-        sha256sum |
-        awk '{print $1}'
-    }
-
-    local external_hash
-    external_hash=$(normalize_subtitle "$subtitle")
-
-    local tracks
-    tracks=$(
-        mkvmerge -J "$video" |
-        jq -r --arg lang "$subtitle_lang" '
-            .tracks[]
-            | select(.type == "subtitles")
-            | select(.codec | test("SubRip|SSA|ASS"; "i"))
-            | select((.properties.language // "") == $lang)
-            | .id
-        '
-    )
-
-    if [[ -z "$tracks" ]]; then
-        cleanup_duplicate_check
-        return 1
-    fi
-
-    local track_id
-    local extracted
-    local internal_hash
-
-    while read -r track_id; do
-        [[ -z "$track_id" ]] && continue
-
-        extracted="$temp_dir/track_${track_id}.srt"
-
-        if ! mkvextract tracks \
-            "$video" \
-            "$track_id:$extracted" >/dev/null 2>&1; then
-            continue
-        fi
-
-        internal_hash=$(normalize_subtitle "$extracted")
-
-        if [[ "$external_hash" == "$internal_hash" ]]; then
-            cleanup_duplicate_check
-            return 0
-        fi
-    done <<< "$tracks"
-
-    cleanup_duplicate_check
-    return 1
-}
-
-########################################
 # VALIDAR SUBTÍTULO
 ########################################
 
@@ -643,10 +537,144 @@ validate_original_tracks() {
 }
 
 ########################################
-# PROCESAR VÍDEO
+# LEER HUELLAS ASOCIADAS A PISTAS DE SUBTÍTULOS
+########################################
+
+read_subtitle_hashes() {
+    local FILE="$1"
+    local JSON_FILE XML_FILE RC
+
+    JSON_FILE="$(mktemp)"
+    XML_FILE="$(mktemp)"
+
+    if ! mkvmerge -J "$FILE" > "$JSON_FILE"; then
+        rm -f -- "$JSON_FILE" "$XML_FILE"
+        log "ERROR | No se pudo identificar el archivo para leer huellas | $FILE"
+        return 1
+    fi
+
+    # mkvextract escribe en una ruta de salida; se elimina el archivo vacío creado por mktemp.
+    rm -f -- "$XML_FILE"
+    if ! mkvextract "$FILE" tags "$XML_FILE" >/dev/null 2>&1; then
+        rm -f -- "$JSON_FILE" "$XML_FILE"
+        log "ERROR | No se pudieron extraer las etiquetas | $FILE"
+        return 1
+    fi
+
+    if python3 - "$JSON_FILE" "$XML_FILE" <<'PY'
+import json
+import sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+json_path, xml_path = sys.argv[1:3]
+with open(json_path, "r", encoding="utf-8") as f:
+    identify = json.load(f)
+
+subtitle_uids = set()
+for track in identify.get("tracks", []):
+    if track.get("type") == "subtitles":
+        uid = track.get("properties", {}).get("uid")
+        if uid is not None:
+            subtitle_uids.add(str(uid))
+
+xml_file = Path(xml_path)
+xml_data = xml_file.read_text(encoding="utf-8", errors="replace").strip() if xml_file.exists() else ""
+if not xml_data:
+    sys.exit(0)
+
+try:
+    root = ET.fromstring(xml_data)
+except ET.ParseError as exc:
+    print(f"XML de etiquetas inválido: {exc}", file=sys.stderr)
+    sys.exit(2)
+
+for tag in root.findall("Tag"):
+    targets = tag.find("Targets")
+    if targets is None:
+        continue
+    track_uids = {node.text.strip() for node in targets.findall("TrackUID") if node.text and node.text.strip()}
+    if not (track_uids & subtitle_uids):
+        continue
+    for simple in tag.findall(".//Simple"):
+        name = simple.findtext("Name", default="").strip()
+        value = simple.findtext("String", default="").strip()
+        if name == "SUBTITLE_SHA256" and len(value) == 64 and all(c in "0123456789abcdefABCDEF" for c in value):
+            print(value.lower())
+PY
+    then
+        RC=0
+    else
+        RC=$?
+        rm -f -- "$JSON_FILE" "$XML_FILE"
+        log "ERROR | No se pudieron interpretar las etiquetas de subtítulos | $FILE"
+        return "$RC"
+    fi
+
+    rm -f -- "$JSON_FILE" "$XML_FILE"
+}
+
+########################################
+# VALIDAR HUELLAS DE LAS NUEVAS PISTAS
+########################################
+
+validate_subtitle_hashes() {
+    local FILE="$1"
+    shift
+    local EXPECTED_HASH
+    local FOUND_HASHES
+
+    if ! FOUND_HASHES="$(read_subtitle_hashes "$FILE")"; then
+        return 1
+    fi
+
+    for EXPECTED_HASH in "$@"; do
+        if ! grep -Fxq -- "$EXPECTED_HASH" <<< "$FOUND_HASHES"; then
+            log "ERROR | No se encontró la huella asociada a una pista de subtítulos | sha256=$EXPECTED_HASH | $FILE"
+            return 1
+        fi
+    done
+
+    log "INFO | Huellas verificadas en pistas de subtítulos | cantidad=$# | $FILE"
+    return 0
+}
+
+########################################
+# PROCESAR VÍDEO (CON BLOQUEO)
 ########################################
 
 process_video() {
+    local CURRENT_VIDEO="$1"
+    local CANONICAL_PATH LOCK_KEY LOCK_PATH LOCK_FD_LOCAL RC
+
+    CANONICAL_PATH="$(realpath -m -- "$CURRENT_VIDEO")"
+    LOCK_KEY="$(printf '%s' "$CANONICAL_PATH" | sha256sum | awk '{print $1}')"
+    LOCK_PATH="${TMPDIR:-/tmp}/embed-subtitles-${UID}-${LOCK_KEY}.lock"
+
+    # El bloqueo se basa en la ruta absoluta para que llamadas con rutas relativas
+    # y absolutas al mismo vídeo compartan el mismo candado.
+    exec {LOCK_FD_LOCAL}>"$LOCK_PATH"
+    log "INFO | Esperando bloqueo de vídeo | $CANONICAL_PATH"
+    flock -x "$LOCK_FD_LOCAL"
+    log "INFO | Bloqueo adquirido | $CANONICAL_PATH"
+
+    if process_video_locked "$CURRENT_VIDEO"; then
+        RC=0
+    else
+        RC=$?
+    fi
+
+    flock -u "$LOCK_FD_LOCAL"
+    exec {LOCK_FD_LOCAL}>&-
+    log "INFO | Bloqueo liberado | $CANONICAL_PATH"
+    return "$RC"
+}
+
+########################################
+# PROCESAR VÍDEO
+########################################
+
+process_video_locked() {
 
     local CURRENT_VIDEO="$1"
 
@@ -693,6 +721,13 @@ process_video() {
 
     esac
 
+    # MP4 se convierte a MKV. Nunca sobrescribir un MKV que ya exista.
+    if [[ "$EXT" == "mp4" && -e "$DIR/$NAME.mkv" ]]; then
+        log "ERROR | Destino MKV ya existe; se conserva el MP4 y no se sobrescribe nada | $DIR/$NAME.mkv"
+        echo "[ERROR] Ya existe el destino MKV; no se modificará ningún archivo: $DIR/$NAME.mkv"
+        return 1
+    fi
+
     ########################################
     # Espacio libre
     ########################################
@@ -732,39 +767,63 @@ process_video() {
     fi
 
     ########################################
-    # Evitar duplicados
+    # Evitar reinsertar el mismo contenido
     ########################################
 
-    FILTERED_SUBS=()
+    # Las huellas se guardan como etiquetas asociadas a cada pista añadida.
+    # En ejecuciones posteriores se leen desde el MKV, sin comparar idiomas.
+    local EXISTING_HASHES=""
+    local SUB_HASH=""
+    local DUPLICATE=0
+    local -a FILTERED_SUBS=()
+    local -a FILTERED_HASHES=()
+    local -a SEEN_HASHES=()
+    local PREVIOUS_HASH=""
+
+    if [[ "${VIDEO,,}" == *.mkv ]]; then
+        if ! EXISTING_HASHES="$(read_subtitle_hashes "$VIDEO")"; then
+            echo "[ERROR] No se pudieron verificar las huellas del MKV. No se modificará el vídeo."
+            return 1
+        fi
+    fi
 
     for SUB in "${SUBS[@]}"; do
+        if ! validate_subtitle "$SUB"; then
+            log "WARN | Subtítulo inválido omitido | $SUB"
+            echo "[SKIP] $(basename "$SUB") (subtítulo inválido)"
+            continue
+        fi
 
-        # Obtener idioma/metadatos antes de comprobar duplicados.
-        # Esto es especialmente importante en modo Bazarr,
-        # donde el idioma viene directamente de Bazarr.
-        prepare_subtitle_metadata "$SUB"
+        SUB_HASH="$(sha256sum -- "$SUB" | awk '{print $1}')"
+        DUPLICATE=0
 
-        if subtitle_already_embedded "$VIDEO" "$SUB" "$LANG"; then
+        if [[ -n "$EXISTING_HASHES" ]] && grep -Fxq -- "$SUB_HASH" <<< "$EXISTING_HASHES"; then
+            DUPLICATE=1
+        fi
 
-            log "SKIP | Subtítulo ya embebido | $SUB"
+        for PREVIOUS_HASH in "${SEEN_HASHES[@]}"; do
+            if [[ "$PREVIOUS_HASH" == "$SUB_HASH" ]]; then
+                DUPLICATE=1
+                break
+            fi
+        done
 
-            echo "[SKIP] $(basename "$SUB") ya está embebido"
-
+        if [[ "$DUPLICATE" -eq 1 ]]; then
+            log "SKIP | Subtítulo ya integrado (misma huella) | $SUB | sha256=$SUB_HASH"
+            echo "[SKIP] $(basename "$SUB") (subtítulo ya integrado)"
             continue
         fi
 
         FILTERED_SUBS+=("$SUB")
-
+        FILTERED_HASHES+=("$SUB_HASH")
+        SEEN_HASHES+=("$SUB_HASH")
     done
 
     SUBS=("${FILTERED_SUBS[@]}")
+    SUB_HASHES=("${FILTERED_HASHES[@]}")
 
     if [[ ${#SUBS[@]} -eq 0 ]]; then
-
-        log "SKIP | Todos los subtítulos ya estaban embebidos | $VIDEO"
-
-        echo "[SKIP] $FILE (subtítulos ya embebidos)"
-
+        log "SKIP | Todos los subtítulos ya estaban integrados | $VIDEO"
         return 0
     fi
 
@@ -792,9 +851,25 @@ process_video() {
     # Añadir nuevos subtítulos
     ########################################
 
-    for SUB in "${SUBS[@]}"; do
+    for i in "${!SUBS[@]}"; do
 
+        SUB="${SUBS[$i]}"
+        SUB_HASH="${SUB_HASHES[$i]}"
         prepare_subtitle_metadata "$SUB"
+
+        # mkvmerge asigna automáticamente el UID de la pista al importar estas etiquetas.
+        TAG_XML="$(mktemp --tmpdir="$DIR" ".${NAME}.subtags.XXXXXX.xml")"
+        TAG_XMLS+=("$TAG_XML")
+        cat > "$TAG_XML" <<EOF
+<Tags>
+  <Tag>
+    <Simple>
+      <Name>SUBTITLE_SHA256</Name>
+      <String>${SUB_HASH}</String>
+    </Simple>
+  </Tag>
+</Tags>
+EOF
 
         CMD+=(
             --language "0:$LANG"
@@ -803,6 +878,7 @@ process_video() {
             --forced-display-flag "0:$FORCED"
             --hearing-impaired-flag "0:$HEARING_IMPAIRED"
             --compression "0:none"
+            --tags "0:$TAG_XML"
             "$SUB"
         )
 
@@ -815,6 +891,12 @@ process_video() {
     log "INFO | Ejecutando mkvmerge | Video=$VIDEO | NuevosSubs=${#SUBS[@]}"
 
     "${CMD[@]}"
+
+    # Las etiquetas ya están incorporadas al temporal; eliminar sus XML auxiliares.
+    for TAG_XML in "${TAG_XMLS[@]:-}"; do
+        [[ -n "$TAG_XML" && -f "$TAG_XML" ]] && rm -f -- "$TAG_XML"
+    done
+    TAG_XMLS=()
 
     ########################################
     # Comprobar temporal
@@ -845,6 +927,16 @@ process_video() {
         echo "El archivo original NO será reemplazado."
         echo
 
+        return 1
+    fi
+
+    # Confirmar que cada hash quedó asociado a una pista de subtítulos,
+    # no simplemente presente como etiqueta global o de otra pista.
+    if ! validate_subtitle_hashes "$TMP" "${SUB_HASHES[@]}"; then
+        echo
+        echo "[ERROR] No se han podido verificar las huellas de los subtítulos nuevos."
+        echo "El archivo original NO será reemplazado."
+        echo
         return 1
     fi
 
@@ -918,7 +1010,18 @@ process_video() {
 
         log "INFO | MP4 -> MKV | $VIDEO -> $FINAL"
 
-        mv -f -- "$TMP" "$FINAL"
+        # -n evita sobrescribir el destino incluso si aparece tras la comprobación inicial.
+        if ! mv -n -- "$TMP" "$FINAL"; then
+            log "ERROR | No se pudo mover el temporal al destino MKV | $FINAL"
+            return 1
+        fi
+
+        # GNU mv -n puede devolver éxito sin mover si el destino ya existe.
+        if [[ -e "$TMP" ]]; then
+            log "ERROR | El destino MKV apareció durante el proceso; no se sobrescribió | $FINAL"
+            echo "[ERROR] El destino MKV ya existe; se conserva el MP4 original: $FINAL"
+            return 1
+        fi
 
         TMP=""
 
